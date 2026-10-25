@@ -257,13 +257,13 @@ function answerQuiz(chosen,ans,info){
   const c=document.getElementById('quizQ');
   const p=document.createElement('div'); p.style.cssText='margin-top:8px;background:#fff3b8;padding:8px;border-radius:8px;font-size:13px'; p.textContent='💡 '+info; c.appendChild(p);
 }
+const NASAB = {"prophet":{"name":"محمد ﷺ","line":["عدنان","معد","نزار","مضر","إلياس","مدركة","خزيمة","كنانة","النضر (قريش)","مالك","فهر","غالب","لؤي","كعب","مرة","كلاب","قصي","عبد مناف","هاشم","عبد المطلب","عبد الله","محمد ﷺ"],"father":"عبد الله بن عبد المطلب","mother":"آمنة بنت وهب","grandfather":"عبد المطلب بن هاشم","uncle":["أبو طالب","حمزة","العباس","أبو لهب"],"wives":["خديجة","سودة","عائشة","حفصة","زينب","أم سلمة","جويرية","ميمونة","صفية","زينب بنت جحش"],"children":["القاسم","عبد الله","إبراهيم","زينب","رقية","أم كلثوم","فاطمة"]}};
 function closeDrawer(){document.getElementById('drawer').classList.remove('open');if(!document.getElementById('nasabDrawer').classList.contains('open')) document.getElementById('overlay').classList.remove('open')}
 function closeNasab(){document.getElementById('nasabDrawer').classList.remove('open');if(!document.getElementById('drawer').classList.contains('open')) document.getElementById('overlay').classList.remove('open')}
-async function openNasab(){
+function openNasab(){
   const body=document.getElementById('nasabBody');
-  try{
-    const r=await fetch('./data/nasab.json?v='+Date.now()); if(!r.ok) throw new Error(r.status); const j=await r.json(); const p=j.prophet;
-    body.innerHTML=`
+  const p=NASAB.prophet;
+  body.innerHTML=`
       <div style="text-align:center;color:#6b5d2e;font-size:12px">النسب الشريف من عدنان إلى محمد ﷺ</div>
       <div class="nasab-tree">
         ${p.line.slice().reverse().map((n,i)=>`<div class="nasab-node ${n.includes('محمد')?'prophet':''}">${n}</div>${i<p.line.length-1?'<div class="nasab-line"></div>':''}`).join('')}
@@ -278,7 +278,6 @@ async function openNasab(){
       </div>
       <p style="font-size:12px;color:#888;text-align:center">اضغط على أي اسم لترى قصته (قريباً)</p>
     `;
-  }catch(e){ body.innerHTML='<p style="color:#999">تعذر التحميل: '+e.message+' — تأكد من التحديث</p>';}
   document.getElementById('nasabDrawer').classList.add('open');
   document.getElementById('overlay').classList.add('open');
 }
