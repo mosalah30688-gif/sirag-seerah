@@ -124,7 +124,7 @@
       <a onclick="filterPhase('حياة النبي',this);closeDropdowns()">عاداته وسننه</a>
       <a onclick="filterPhase('أسماء أشيائه',this);closeDropdowns()">أشياؤه (ناقته/سيفه)</a>
       <a onclick="filterPhase('بناء المساجد',this);closeDropdowns()">مساجده</a>
-      <a onclick="document.getElementById('q').value='خلق';render();closeDropdowns();document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'))">خصائصه وصفاته</a>
+      <a onclick="document.getElementById('q').value='خلق';render();closeDropdowns();document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));const b=document.querySelector('#lifeDrop .chip');if(!b.dataset.orig) b.dataset.orig=b.textContent; b.textContent='خصائصه وصفاته ▼'; b.classList.add('active')">خصائصه وصفاته</a>
       <a onclick="filterPhase('الوداع',this);closeDropdowns()">وفاته</a>
     </div>
   </div>
@@ -265,11 +265,24 @@ function renderMap(e){
 function filterPhase(p,el){
   active=p;
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  // لو من قائمة منسدلة، فعل زر القائمة
   if(el && el.tagName==='A'){
     const drop=el.closest('.dropdown');
-    if(drop) drop.querySelector('.chip').classList.add('active');
+    if(drop){
+      const btn=drop.querySelector('.chip');
+      btn.classList.add('active');
+      // احفظ الأصلي أول مرة
+      if(!btn.dataset.orig) btn.dataset.orig=btn.textContent;
+      btn.textContent=el.textContent+' ▼';
+      btn.dataset.active=p;
+    }
   } else if(el){
+    // ضغط "الكل" → رجع أسماء القوائم لأصلها
+    if(p==='all'){
+      document.querySelectorAll('.dropdown .chip').forEach(b=>{
+        if(b.dataset.orig) b.textContent=b.dataset.orig;
+        b.classList.remove('active');
+      });
+    }
     el.classList.add('active');
   }
   render();
