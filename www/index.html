@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>محمد رسول الله — 23 سنة في جيبك</title>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;700;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--green:#0f3d2e;--gold:#c8a84a;--cream:#fdfcf6;--sand:#f5efe0;--ink:#1a1a1a}
+  body{font-family:'Tajawal',system-ui;background:var(--cream);color:var(--ink);overflow-x:hidden}
+  /* HERO - الراية */
+  .hero{background:#0a0a0a;color:#fff;min-height:58vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 16px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#1a3a2a 0%,#000 70%);opacity:.9}
+  .hero>*{position:relative;z-index:1}
+  .rayah{border:2px solid #fff3b8;padding:28px 36px;position:relative;background:#000;box-shadow:0 0 40px rgba(200,168,74,.2)}
+  .rayah::before{content:'لا إله إلا الله';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:#000;color:#fff3b8;font-size:11px;letter-spacing:3px;padding:0 12px;font-family:'Amiri',serif;border:1px solid #333}
+  .rayah h1{font-family:'Amiri',serif;font-size:52px;line-height:.9;font-weight:900;letter-spacing:2px}
+  .rayah h1 span{display:block}
+  .rayah h1 span:nth-child(1){font-size:48px}
+  .rayah h1 span:nth-child(2){font-size:56px;color:#fff3b8}
+  .rayah h1 span:nth-child(3){font-size:54px}
+  .hero p{margin-top:18px;color:#c8a84a;letter-spacing:4px;font-size:13px;font-weight:700}
+  .hero .sub{color:#aaa;font-size:13px;margin-top:6px;letter-spacing:.5px;line-height:1.6;max-width:520px}
+  .hero .cta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .btn{border:none;border-radius:999px;padding:12px 26px;font-family:'Tajawal';font-weight:800;cursor:pointer;font-size:14px;transition:.2s}
+  .btn-gold{background:var(--gold);color:#000}
+  .btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(200,168,74,.4)}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid #444}
+  .stats{display:flex;gap:18px;justify-content:center;margin-top:18px;font-size:12px;color:#888}
+  .stats b{color:#fff3b8}
+  /* NAV */
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(253,252,246,.92);backdrop-filter:blur(8px);border-bottom:1px solid #e8e0c8;display:flex;align-items:center;gap:8px;padding:10px 12px;overflow-x:auto}
+  .chip{white-space:nowrap;border:1px solid #e8e0c8;background:#fff;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer}
+  .chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .search{margin-left:auto;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #e8e0c8;border-radius:999px;padding:6px 12px;min-width:160px}
+  .search input{border:none;outline:none;font-family:'Tajawal';font-size:13px;width:100%;background:transparent}
+  /* TIMELINE */
+  .wrap{max-width:860px;margin:0 auto;padding:18px 14px}
+  .section-head{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
+  .section-head h2{font-size:15px;font-weight:900;color:var(--green);background:var(--sand);padding:6px 14px;border-radius:999px;border:1px solid #e8e0c8}
+  .section-head .line{flex:1;height:1px;background:#e8e0c8}
+  .timeline{position:relative;padding-right:22px}
+  .timeline::before{content:'';position:absolute;right:7px;top:0;bottom:0;width:3px;background:linear-gradient(var(--gold),var(--green));border-radius:99px;opacity:.25}
+  .event{position:relative;background:#fff;border:1px solid #ece6d3;border-radius:18px;padding:14px 14px 12px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.04);cursor:pointer;transition:.15s}
+  .event:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,0,0,.07);border-color:#d9cdaa}
+  .event::before{content:'';position:absolute;right:-22px;top:18px;width:13px;height:13px;background:var(--gold);border:3px solid var(--cream);border-radius:50%;box-shadow:0 0 0 3px rgba(200,168,74,.15)}
+  .event.live{border-color:#c8a84a;box-shadow:0 0 0 3px rgba(200,168,74,.12)}
+  .event.live::before{background:var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(15,61,46,.35)}70%{box-shadow:0 0 0 9px rgba(15,61,46,0)}100%{box-shadow:0 0 0 0 rgba(15,61,46,0)}}
+  .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11px}
+  .badge{padding:3px 8px;border-radius:999px;font-weight:800}
+  .b-hijri{background:var(--green);color:#fff}
+  .b-greg{background:#fff3b8;color:#5a4a12;border:1px solid #e8d9a0}
+  .b-place{background:#fff;border:1px solid #e8e0c8;color:#6b5d2e}
+  .event h3{font-size:17px;font-weight:900;margin:8px 0 6px;color:#0f2a20;line-height:1.3}
+  .event p{font-size:13.5px;line-height:1.7;color:#3a3a3a;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .event .foot{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .ayah-tag{font-family:'Amiri',serif;background:#0f3d2e;color:#fff3b8;padding:4px 10px;border-radius:999px;font-size:11px}
+  .sahaba{font-size:11px;color:#7a6a3a}
+  .open-hint{margin-left:auto;font-size:11px;color:#999}
+  /* DRAWER */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:30}
+  .overlay.open{display:block}
+  .drawer{position:fixed;inset:0 0 0 auto;width:min(560px,100%);background:var(--cream);z-index:31;transform:translateX(100%);transition:.3s;overflow:auto;border-left:1px solid #e8e0c8}
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{position:sticky;top:0;background:var(--cream);padding:14px;border-bottom:1px solid #e8e0c8;display:flex;align-items:center;gap:10px}
+  .drawer-body{padding:18px}
+  .drawer-body h3{font-size:22px;font-weight:900;color:var(--green)}
+  .drawer-body .big-meta{margin:10px 0;display:flex;gap:6px;flex-wrap:wrap}
+  .drawer-body p{font-size:15px;line-height:1.9;color:#222;margin:12px 0}
+  .qbox{background:#fff;border:1px solid #ece6d3;border-radius:14px;padding:12px;margin:14px 0}
+  .qbox h4{font-size:13px;color:var(--green);margin-bottom:6px}
+  .qbox button{width:100%;text-align:right;background:#fdfcf6;border:1px solid #e8e0c8;border-radius:10px;padding:10px 12px;margin:6px 0;font-family:'Tajawal';cursor:pointer}
+  .qbox button.correct{background:#e6f4ea;border-color:#a3d9b1}
+  .qbox button.wrong{background:#fde8e8;border-color:#f5b5b5}
+  .mapbox{height:180px;background:linear-gradient(135deg,#0f3d2e,#1a5a3a);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff3b8;position:relative;overflow:hidden}
+  .mapbox::after{content:'خريطة الهجرة / الغزوة — SVG أوفلاين';font-size:12px;opacity:.9}
+  .progress{height:8px;background:#ece6d3;border-radius:999px;overflow:hidden;margin:10px 0}
+  .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green));width:0}
+  /* HIFZ */
+  .hifz-card{background:#0f3d2e;color:#fff;border-radius:16px;padding:14px;margin:14px 0}
+  .hifz-card button{background:#fff3b8;color:#0f3d2e;border:none;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer;margin-top:8px}
+  footer{text-align:center;padding:30px 12px;color:#999;font-size:12px}
+  @media(min-width:900px){.hero{padding:42px}.rayah h1{font-size:62px}.wrap{padding:24px}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="rayah">
+    <h1><span>مُحَمَّدٌ</span><span>رَسُولُ</span><span>اللهِ</span></h1>
+  </div>
+  <p>23 سَنَةً فِي جَيْبِكَ</p>
+  <div class="sub">عِش السيرة يوم بيوم — من غار حراء إلى حجة الوداع. تايملاين، خرائط، حفظ ذكي، ومحاكي قرارات. أوفلاين 100%.</div>
+  <div class="cta">
+    <button class="btn btn-gold" onclick="document.querySelector('.topbar').scrollIntoView({behavior:'smooth'})">ابدأ الرحلة الآن ↓</button>
+    <button class="btn btn-ghost" onclick="toggleHifz()">🧠 حفظي</button>
+  </div>
+  <div class="stats"><span>⏳ <b>37</b> حدث</span><span>🗺️ 12 خريطة</span><span>📖 9 روابط قرآنية</span></div>
+</div>
+
+<div class="topbar">
+  <button class="chip active" data-filter="all" onclick="filterPhase('all',this)">الكل</button>
+  <button class="chip" data-filter="المولد والنشأة" onclick="filterPhase('المولد والنشأة',this)">المولد</button>
+  <button class="chip" data-filter="البعثة - مكة سراً" onclick="filterPhase('البعثة - مكة سراً',this)">البعثة</button>
+  <button class="chip" data-filter="الجهر والاضطهاد" onclick="filterPhase('الجهر والاضطهاد',this)">الجهر</button>
+  <button class="chip" data-filter="الهجرة" onclick="filterPhase('الهجرة',this)">الهجرة</button>
+  <button class="chip" data-filter="الغزوات" onclick="filterPhase('الغزوات',this)">الغزوات</button>
+  <button class="chip" data-filter="الفتح الأعظم" onclick="filterPhase('الفتح الأعظم',this)">الفتح</button>
+  <button class="chip" data-filter="الوداع" onclick="filterPhase('الوداع',this)">الوداع</button>
+  <label class="search">🔍 <input id="q" placeholder="ابحث: بدر، خديجة، 2 هـ" oninput="render()"></label>
+</div>
+
+<div class="wrap" id="wrap"></div>
+
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <button class="btn btn-ghost" style="color:#000;border-color:#ddd" onclick="closeDrawer()">✕ إغلاق</button>
+    <strong id="dTitle" style="margin-right:auto"></strong>
+    <button class="btn btn-gold" style="padding:8px 14px" onclick="shareEvent()">مشاركة</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<footer>ﷺ — اللهم صل وسلم على نبينا محمد — إهداء لروح سراج</footer>
+
+<script>
+let data=[];
+let active='all';
+let opened=null;
+let hifz=new Set(JSON.parse(localStorage.getItem('seerah_hifz')||'[]'));
+function saveHifz(){localStorage.setItem('seerah_hifz',JSON.stringify([...hifz]))}
+async function load(){
+  const r=await fetch('./data/seerah.json'); data=await r.json(); render();
+}
+function filterPhase(p,el){
+  active=p;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); render();
+}
+function render(){
+  const q=(document.getElementById('q').value||'').trim();
+  const wrap=document.getElementById('wrap');
+  let list=data.filter(e=>{
+    if(active!=='all' && !e.phase.includes(active) && e.phase!==active) return false;
+    if(q && !(e.title.includes(q)||e.desc.includes(q)||e.place.includes(q)||e.hijri.includes(q))) return false;
+    return true;
+  });
+  // group by phase
+  let html='';
+  let cur='';
+  let done=0;
+  list.forEach(e=>{
+    if(e.phase!==cur){ cur=e.phase; html+=`<div class="section-head"><h2>${cur}</h2><div class="line"></div></div><div class="timeline">`}
+    const isHifz=hifz.has(e.id);
+    const isLive=e.id===22; // بدر live demo
+    html+=`<div class="event ${isLive?'live':''}" onclick="openEvent(${e.id})">
+      <div class="meta">
+        <span class="badge b-hijri">${e.hijri}</span>
+        <span class="badge b-greg">${e.greg}</span>
+        <span class="badge b-place">📍 ${e.place}</span>
+        ${isHifz?'🔖 محفوظ':''}
+      </div>
+      <h3>${e.title}</h3>
+      <p>${e.desc}</p>
+      <div class="foot">
+        ${e.ayah?`<span class="ayah-tag">﴿ ${e.ayah} ﴾</span>`:''}
+        ${e.sahaba.length?`<span class="sahaba">👤 ${e.sahaba.join(' • ')}</span>`:''}
+        <span class="open-hint">افتح ←</span>
+      </div>
+    </div>`;
+    done++;
+    // close timeline group when next phase different
+    const next=list[list.indexOf(e)+1];
+    if(!next || next.phase!==cur) html+=`</div>`;
+  });
+  if(!list.length) html='<p style="text-align:center;color:#999;padding:40px">لا نتائج</p>';
+  // hifz card top
+  const hifzCard=`<div class="hifz-card">
+    <div style="font-weight:900">🧠 حفظي الذكي — ${hifz.size} أحداث</div>
+    <div style="font-size:12px;opacity:.9;margin-top:4px">نظام 1-3-7-14-30 سيذكرك تلقائياً. احفظ أي حدث وسيظهر هنا.</div>
+    <div class="progress"><i id="prog" style="width:${Math.min(100,Math.round(hifz.size/37*100))}%"></i></div>
+    <div style="font-size:12px">${hifz.size}/37 — ${Math.round(hifz.size/37*100)}%</div>
+  </div>`;
+  wrap.innerHTML=hifzCard+html;
+}
+function openEvent(id){
+  const e=data.find(x=>x.id===id); if(!e) return; opened=e;
+  document.getElementById('dTitle').textContent=e.title;
+  const body=document.getElementById('drawerBody');
+  const isHifz=hifz.has(e.id);
+  body.innerHTML=`
+    <div class="big-meta">
+      <span class="badge b-hijri">${e.hijri}</span><span class="badge b-greg">${e.greg}</span><span class="badge b-place">📍 ${e.place}</span>
+      <span class="badge" style="background:${isHifz?'#0f3d2e':'#fff'};color:${isHifz?'#fff':'#0f3d2e'};border:1px solid #0f3d2e">${isHifz?'🔖 محفوظ':'☆ حفظ'}</span>
+    </div>
+    <h3>${e.title}</h3>
+    <p>${e.desc}</p>
+    ${e.ayah?`<div class="qbox"><h4>🔗 الآية المرتبطة — ${e.ayah}</h4><p style="font-family:Amiri,serif;font-size:18px">﴿ ... ﴾ — افتحها في مصحف سراج</p><button onclick="alert('سيفتح مصحف سراج على ${e.ayah}')">افتح في سراج</button></div>`:''}
+    <div class="mapbox"></div>
+    <div class="qbox" id="quizBox">
+      <h4>🎯 محاكي القرار — اختبر فهمك</h4>
+      <div id="quizQ"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-gold" style="flex:1" onclick="toggleSave(${e.id})">${isHifz?'إلغاء الحفظ':'🧠 احفظ للمراجعة'}</button>
+      <button class="btn btn-ghost" style="flex:1;color:#000;border-color:#ddd" onclick="nextEvent()">التالي →</button>
+    </div>
+  `;
+  loadQuiz(e);
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function loadQuiz(e){
+  const qmap={
+    22:{q:"كم كان عدد المسلمين في بدر؟",opts:["313","1000","700"],a:0,info:"313 ثبتوا فنصرهم الله."},
+    23:{q:"لماذا هُزم المسلمون أولاً في أحد؟",opts:["قلة العدد","مخالفة الرماة","خيانة"],a:1,info:"الرماة تركوا الجبل لجمع الغنائم."},
+    31:{q:"ماذا قال النبي لأهل مكة يوم الفتح؟",opts:["اقتلوهم","اذهبوا فأنتم الطلقاء","ادفعوا الجزية"],a:1,info:"عفو نبوي لم يشهده التاريخ."}
+  };
+  const qq=qmap[e.id]||{q:"ما الدروس من هذا الحدث؟",opts:["الصبر","الشورى","التوكل"],a:1,info:"الشورى والثبات أهم الدروس."};
+  const box=document.getElementById('quizQ');
+  box.innerHTML=`<div style="font-weight:800;margin-bottom:6px">${qq.q}</div>`+qq.opts.map((o,i)=>`<button onclick="answerQuiz(${i},${qq.a},'${qq.info}')">${o}</button>`).join('');
+}
+function answerQuiz(chosen,ans,info){
+  document.querySelectorAll('#quizQ button').forEach((b,i)=>{
+    b.classList.remove('correct','wrong');
+    if(i===ans) b.classList.add('correct');
+    else if(i===chosen) b.classList.add('wrong');
+  });
+  const c=document.getElementById('quizQ');
+  const p=document.createElement('div'); p.style.cssText='margin-top:8px;background:#fff3b8;padding:8px;border-radius:8px;font-size:13px'; p.textContent='💡 '+info; c.appendChild(p);
+}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('open')}
+function toggleSave(id){ if(hifz.has(id)) hifz.delete(id); else hifz.add(id); saveHifz(); render(); openEvent(id); }
+function toggleHifz(){ filterPhase('all',document.querySelector('[data-filter="all"]')); document.getElementById('q').value=''; render(); alert('محفوظاتك: '+[...hifz].join(', ')||'لا شيء بعد'); }
+function nextEvent(){ if(!opened) return; const i=data.findIndex(x=>x.id===opened.id); if(i>=0&&i<data.length-1) openEvent(data[i+1].id); }
+function shareEvent(){ if(!opened) return; const t=`${opened.title} — ${opened.hijri} (${opened.place})\n${opened.desc}`; if(navigator.share) navigator.share({title:opened.title,text:t}); else {navigator.clipboard.writeText(t); alert('تم النسخ');}}
+load();
+</script>
+</body>
+</html>
