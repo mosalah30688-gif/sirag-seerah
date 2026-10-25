@@ -147,8 +147,23 @@
 let data=[],maps={},ayahs={};
 let active='all';
 let opened=null;
-let hifz=new Set(JSON.parse(localStorage.getItem('seerah_hifz')||'[]'));
-function saveHifz(){localStorage.setItem('seerah_hifz',JSON.stringify([...hifz]))}
+let hifz=JSON.parse(localStorage.getItem('seerah_hifz_v2')||'{}');
+// ترحيل من النظام القديم (Set)
+try{
+  if(!Object.keys(hifz).length){
+    let old=JSON.parse(localStorage.getItem('seerah_hifz')||'[]');
+    if(Array.isArray(old) && old.length){
+      old.forEach(id=>{hifz[id]={added:Date.now(),nextDue:Date.now()+86400000,intervalIdx:0,reviews:0}});
+      localStorage.setItem('seerah_hifz_v2', JSON.stringify(hifz));
+    }
+  }
+}catch(e){}
+function saveHifz(){localStorage.setItem('seerah_hifz_v2', JSON.stringify(hifz)); try{localStorage.setItem('seerah_hifz', JSON.stringify(Object.keys(hifz).map(k=>parseInt(k))))}catch(e){}}
+const HIFZ_INTERVALS=[1,3,7,14,30];
+function isDue(id){ const r=hifz[id]; if(!r) return false; return Date.now() >= r.nextDue; }
+function getDueList(){ return Object.keys(hifz).filter(id=>isDue(parseInt(id))).map(id=>parseInt(id)); }
+function getHifzCount(){ return Object.keys(hifz).length; }
+function hifzHas(id){ return !!hifz[id]; }
 async function load(){
   const r=await fetch('./data/seerah.json'); data=await r.json();
   try{ const m=await fetch('./data/maps.json'); maps=await m.json(); }catch(e){}
@@ -241,14 +256,14 @@ function render(){
   let done=0;
   list.forEach(e=>{
     if(e.phase!==cur){ cur=e.phase; html+=`<div class="section-head"><h2>${cur}</h2><div class="line"></div></div><div class="timeline">`}
-    const isHifz=hifz.has(e.id);
+    const isHifz=hifzHas(e.id); const dueNow=isDue(e.id);
     const isLive=e.id===22; // بدر live demo
     html+=`<div class="event ${isLive?'live':''}" onclick="openEvent(${e.id})">
       <div class="meta">
         <span class="badge b-hijri">${e.hijri}</span>
         <span class="badge b-greg">${e.greg}</span>
         <span class="badge b-place">📍 ${e.place}</span>
-        ${isHifz?'🔖 محفوظ':''}
+        ${isHifz?(dueNow?'🔖 مستحق':'🔖 محفوظ'):''}
       </div>
       <h3>${e.title}</h3>
       <p>${e.desc}</p>
@@ -264,12 +279,13 @@ function render(){
     if(!next || next.phase!==cur) html+=`</div>`;
   });
   if(!list.length) html='<p style="text-align:center;color:#999;padding:40px">لا نتائج</p>';
-  // hifz card top
-  const hifzCard=`<div class="hifz-card">
-    <div style="font-weight:900">🧠 حفظي الذكي — ${hifz.size} أحداث</div>
-    <div style="font-size:12px;opacity:.9;margin-top:4px">نظام 1-3-7-14-30 سيذكرك تلقائياً. احفظ أي حدث وسيظهر هنا.</div>
-    <div class="progress"><i id="prog" style="width:${Math.min(100,Math.round(hifz.size/data.length*100))}%"></i></div>
-    <div style="font-size:12px">${hifz.size}/${data.length} — ${Math.round(hifz.size/data.length*100)}%</div>
+  // hifz card top — نظام 1-3-7-14-30
+  const total=getHifzCount(); const due=getDueList().length; const pct=Math.round(total/data.length*100);
+  const hifzCard=`<div class="hifz-card" onclick="toggleHifz()" style="cursor:pointer">
+    <div style="font-weight:900">🧠 حفظي الذكي — ${total} أحداث ${due?`• <span style="background:#c8a84a;color:#000;padding:2px 8px;border-radius:99px;font-size:11px">${due} مستحق اليوم</span>`:''}</div>
+    <div style="font-size:12px;opacity:.9;margin-top:4px">نظام 1-3-7-14-30 — المراجعة المتباعدة. اضغط لعرض المستحق.</div>
+    <div class="progress"><i style="width:${Math.min(100,pct)}%"></i></div>
+    <div style="font-size:12px">${total}/${data.length} — ${pct}% ${due?`• ${due} للمراجعة الآن`:''}</div>
   </div>`;
   wrap.innerHTML=hifzCard+html;
 }
@@ -277,11 +293,11 @@ function openEvent(id){
   const e=data.find(x=>x.id===id); if(!e) return; opened=e;
   document.getElementById('dTitle').textContent=e.title;
   const body=document.getElementById('drawerBody');
-  const isHifz=hifz.has(e.id);
+  const isHifz=hifzHas(e.id); const dueNow=isDue(e.id);
   body.innerHTML=`
     <div class="big-meta">
       <span class="badge b-hijri">${e.hijri}</span><span class="badge b-greg">${e.greg}</span><span class="badge b-place">📍 ${e.place}</span>
-      <span class="badge" style="background:${isHifz?'#0f3d2e':'#fff'};color:${isHifz?'#fff':'#0f3d2e'};border:1px solid #0f3d2e">${isHifz?'🔖 محفوظ':'☆ حفظ'}</span>
+      <span class="badge" style="background:${isHifz?(dueNow?'#c8a84a':'#0f3d2e'):'#fff'};color:${isHifz?(dueNow?'#000':'#fff'):'#0f3d2e'};border:1px solid ${dueNow?'#c8a84a':'#0f3d2e'}">${isHifz?(dueNow?'⏰ مستحق':'🔖 محفوظ'):'☆ حفظ'}</span>
     </div>
     <h3>${e.title}</h3>
     <p>${e.desc}</p>
@@ -291,10 +307,11 @@ function openEvent(id){
       <h4>🎯 محاكي القرار — اختبر فهمك</h4>
       <div id="quizQ"></div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn btn-gold" style="flex:1" onclick="toggleSave(${e.id})">${isHifz?'إلغاء الحفظ':'🧠 احفظ للمراجعة'}</button>
-      <button class="btn btn-ghost" style="flex:1;color:#000;border-color:#ddd" onclick="nextEvent()">التالي →</button>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      ${!isHifz?`<button class="btn btn-gold" style="flex:1" onclick="toggleSave(${e.id})">🧠 احفظ للمراجعة</button>`:dueNow?`<button class="btn btn-gold" style="flex:1" onclick="markReviewed(${e.id})">✅ تمت المراجعة</button><button class="btn btn-ghost" style="flex:1;color:#000;border-color:#ddd" onclick="toggleSave(${e.id})">إلغاء الحفظ</button>`:`<button class="btn btn-gold" style="flex:1;opacity:.8" onclick="markReviewed(${e.id})">⏳ المراجعة بعد ${Math.max(1,Math.ceil((hifz[e.id].nextDue-Date.now())/86400000))} يوم</button><button class="btn btn-ghost" style="flex:1;color:#000;border-color:#ddd" onclick="toggleSave(${e.id})">إلغاء الحفظ</button>`}
+      <button class="btn btn-ghost" style="flex:1;color:#000;border-color:#ddd;min-width:100px" onclick="nextEvent()">التالي →</button>
     </div>
+    ${isHifz?`<div style="font-size:11px;color:#6b5d2e;margin-top:8px;text-align:center">المراجعات: ${hifz[e.id].reviews} • المرحلة ${hifz[e.id].intervalIdx+1}/5 (1-3-7-14-30 يوم)</div>`:''}
   `;
   loadQuiz(e);
   document.getElementById('drawer').classList.add('open');
@@ -445,8 +462,46 @@ function openNasab(){
   document.getElementById('nasabDrawer').classList.add('open');
   document.getElementById('overlay').classList.add('open');
 }
-function toggleSave(id){ if(hifz.has(id)) hifz.delete(id); else hifz.add(id); saveHifz(); render(); openEvent(id); }
-function toggleHifz(){ filterPhase('all',document.querySelector('[data-filter="all"]')); document.getElementById('q').value=''; render(); alert('محفوظاتك: '+[...hifz].join(', ')||'لا شيء بعد'); }
+function toggleSave(id){
+  if(hifz[id]){ delete hifz[id]; }
+  else { hifz[id]={added:Date.now(), nextDue: Date.now()+86400000, intervalIdx:0, reviews:0}; }
+  saveHifz(); render(); openEvent(id);
+}
+function markReviewed(id){
+  const r=hifz[id]; if(!r) return;
+  r.reviews++;
+  if(r.intervalIdx < HIFZ_INTERVALS.length-1) r.intervalIdx++;
+  const days=HIFZ_INTERVALS[r.intervalIdx];
+  r.nextDue = Date.now() + days*86400000;
+  saveHifz(); render(); openEvent(id);
+}
+function toggleHifz(){
+  const total=getHifzCount(); if(total===0){ alert('لم تحفظ أي حدث بعد — افتح حدث واضغط 🧠 احفظ'); return; }
+  const due=getDueList();
+  document.getElementById('dTitle').textContent=`🧠 حفظي الذكي — ${total} أحداث`;
+  const body=document.getElementById('drawerBody');
+  let html=`<div class="qbox" style="background:#0f3d2e;color:#fff;border-color:#0f3d2e"><div style="font-weight:900">نظام 1-3-7-14-30 يوم</div><div style="font-size:12px;opacity:.9">${due.length} مستحق اليوم • ${total-due.length} قادم</div></div>`;
+  if(due.length){
+    html+=`<h4 style="color:#0f3d2e;margin:12px 0 8px">⏰ مستحق اليوم (${due.length})</h4>`;
+    due.forEach(id=>{
+      const e=data.find(x=>x.id===id);
+      html+=`<div class="event" style="margin:8px 0;cursor:pointer" onclick="openEvent(${id})"><div style="font-weight:800">${e.title}</div><div style="font-size:12px;color:#666">${e.hijri} • ${e.place}</div><button class="btn btn-gold" style="margin-top:8px;padding:6px 12px" onclick="event.stopPropagation();markReviewed(${id})">✅ راجعت</button></div>`;
+    });
+  }
+  const upcoming=Object.keys(hifz).filter(id=>!isDue(parseInt(id))).map(id=>parseInt(id)).slice(0,20);
+  if(upcoming.length){
+    html+=`<h4 style="color:#6b5d2e;margin:12px 0 8px">⏳ قادم</h4>`;
+    upcoming.forEach(id=>{
+      const e=data.find(x=>x.id===id);
+      const days=Math.max(1,Math.ceil((hifz[id].nextDue-Date.now())/86400000));
+      html+=`<div class="event" style="margin:8px 0;opacity:.85" onclick="openEvent(${id})"><div style="font-weight:700">${e.title}</div><div style="font-size:11px;color:#888">المراجعة بعد ${days} يوم • المرحلة ${hifz[id].intervalIdx+1}/5</div></div>`;
+    });
+  }
+  html+=`<button class="btn btn-ghost" style="width:100%;margin-top:12px;color:#000;border-color:#ddd" onclick="if(confirm('مسح كل المحفوظات؟')){hifz={};saveHifz();render();closeDrawer();}">مسح الكل</button>`;
+  body.innerHTML=html;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
 function nextEvent(){ if(!opened) return; const i=data.findIndex(x=>x.id===opened.id); if(i>=0&&i<data.length-1) openEvent(data[i+1].id); }
 function shareEvent(){ if(!opened) return; const t=`${opened.title} — ${opened.hijri} (${opened.place})\n${opened.desc}`; if(navigator.share) navigator.share({title:opened.title,text:t}); else {navigator.clipboard.writeText(t); alert('تم النسخ');}}
 load();
