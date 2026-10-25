@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.4-hifz-130';
+const CACHE = 'sirag-v1.5-hadith-101';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   './icon.png',
   './data/seerah.json',
   './data/ayahs.json',
+  './data/hadith.json',
   './data/maps.json',
   './data/nasab.json'
 ];

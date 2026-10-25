@@ -121,7 +121,7 @@
   <label class="search">🔍 <input id="q" placeholder="ابحث: بدر، خديجة، 2 هـ" oninput="render()"></label>
 </div>
 
-<div style="max-width:860px;margin:0 auto;padding:14px 14px 0"><div id="todayCard" style="background:linear-gradient(135deg,#0f3d2e,#1e5a3a);color:#fff;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;min-height:72px" onclick="if(window._todayId) openEvent(window._todayId)"><div style="width:48px;height:48px;border-radius:50%;background:#fff3b8;color:#0f3d2e;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📅</div><div style="flex:1;min-width:0"><div style="font-size:11px;opacity:.8">عِش اليوم — جاري التحميل...</div><div style="font-weight:900;margin:4px 0">...</div></div><div style="font-size:18px">←</div></div></div>
+<div style="max-width:860px;margin:0 auto;padding:14px 14px 0"><div id="hadithBar" style="background:#fff;border:1px solid #e8e0c8;border-right:4px solid #c8a84a;border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:#0f3d2e;color:#fff3b8;display:flex;align-items:center;justify-content:center;font-size:18px">📜</div><div style="flex:1;min-width:0"><div style="font-size:10px;color:#0f3d2e;font-weight:800;letter-spacing:.6px">إشعارات السيرة — حديث صحيح</div><div id="hadithText" style="font-family:'Amiri',serif;font-size:16px;line-height:1.7;color:#0f2a20;margin:5px 0">جاري تحميل حديث السيرة...</div><div id="hadithSrc" style="font-size:11px;color:#6b5d2e"></div></div><div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0"><button onclick="nextHadith()" title="التالي" style="width:36px;height:36px;border-radius:50%;border:1px solid #e8e0c8;background:#fff;cursor:pointer;font-size:14px">↻</button><button onclick="shareHadith()" title="مشاركة" style="width:36px;height:36px;border-radius:50%;border:1px solid #e8e0c8;background:#fff;cursor:pointer;font-size:14px">↗</button></div></div></div>
 <div class="wrap" id="wrap"></div>
 
 <div class="overlay" id="overlay" onclick="closeDrawer();closeNasab()"></div>
@@ -164,42 +164,44 @@ function isDue(id){ const r=hifz[id]; if(!r) return false; return Date.now() >= 
 function getDueList(){ return Object.keys(hifz).filter(id=>isDue(parseInt(id))).map(id=>parseInt(id)); }
 function getHifzCount(){ return Object.keys(hifz).length; }
 function hifzHas(id){ return !!hifz[id]; }
+let hadiths=[],hadithIdx=0;
 async function load(){
   const r=await fetch('./data/seerah.json'); data=await r.json();
   try{ const m=await fetch('./data/maps.json'); maps=await m.json(); }catch(e){}
   try{ const a=await fetch('./data/ayahs.json'); ayahs=await a.json(); }catch(e){}
-  // تحديث العداد
+  try{ const h=await fetch('./data/hadith.json'); hadiths=await h.json(); }catch(e){ hadiths=[]; }
   const sc=document.getElementById('statCount'); if(sc) sc.textContent=data.length;
   render();
-  renderToday();
+  renderHadithBar();
 }
-function renderToday(){
-  const el=document.getElementById('todayCard');
-  if(!el || !data.length) return;
-  // التاريخ الهجري (أم القرى) هو الأساس في السيرة — اليوم جمادى الأولى 1448
-  let hDay=14,hMonth=5,hYear='1448',hStr='',hMonthName='جمادى الأولى';
-  const mNames=['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
-  const mShort=['محرم','صفر','ربيع1','ربيع2','جمادى1','جمادى2','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
-  try{
-    const toLatn=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d]/g,'');
-    const fmt=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
-    const parts=fmt.formatToParts(new Date());
-    hDay=parseInt(toLatn(parts.find(p=>p.type==='day').value))||hDay;
-    hMonth=parseInt(toLatn(parts.find(p=>p.type==='month').value))||hMonth;
-    hYear=toLatn(parts.find(p=>p.type==='year').value)||hYear;
-    hMonthName=mNames[hMonth-1]||hMonthName;
-    hStr=`${hDay} ${hMonthName} ${hYear}هـ`;
-  }catch(e){ hStr=new Date().toLocaleDateString('ar-EG'); }
-  const idx=(hDay + hMonth*3) % data.length;
-  const e=data[idx];
-  window._todayId=e.id;
-  // أيقونة التاريخ الحقيقي - رقم اليوم الهجري
-  el.innerHTML=`<div style="width:52px;height:52px;border-radius:12px;background:#fff;color:#0f3d2e;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;flex-shrink:0;border:1px solid #e8e0c8;box-shadow:0 2px 8px rgba(0,0,0,.1)"><div style="font-size:20px;font-weight:900">${hDay}</div><div style="font-size:8px;font-weight:800;opacity:.7;margin-top:1px">${mShort[hMonth-1]}</div></div>
-    <div style="flex:1;min-width:0"><div style="font-size:11px;opacity:.8">عِش اليوم — ${hStr}</div><div style="font-weight:900;margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div><div style="font-size:12px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.desc.slice(0,60)}...</div></div>
-    <div style="font-size:18px;opacity:.9">←</div>`;
-  el.onclick=()=>{ const ev=data.find(x=>x.id===window._todayId); if(ev) openEvent(ev.id); else alert('جاري التحميل...'); };
-  el.style.cursor='pointer';
+function renderHadithBar(){
+  const el=document.getElementById('hadithBar'); if(!el || !hadiths.length) return;
+  hadithIdx=Math.floor(Math.random()*hadiths.length);
+  showHadith(hadithIdx);
+  // تناوب تلقائي كل 20 ثانية
+  setInterval(()=>{ nextHadith(); }, 20000);
 }
+function showHadith(i){
+  const h=hadiths[i]; if(!h) return;
+  document.getElementById('hadithText').textContent='« '+h.text+' »';
+  document.getElementById('hadithSrc').textContent='— '+h.narrator+' • '+h.source+' • '+h.grade;
+}
+function nextHadith(){
+  if(!hadiths.length) return;
+  hadithIdx=(hadithIdx+1)%hadiths.length;
+  // عشوائي حقيقي
+  if(Math.random()>0.5) hadithIdx=Math.floor(Math.random()*hadiths.length);
+  const el=document.getElementById('hadithText');
+  el.style.opacity='0';
+  setTimeout(()=>{ showHadith(hadithIdx); el.style.opacity='1'; }, 200);
+}
+function shareHadith(){
+  const h=hadiths[hadithIdx]; if(!h) return;
+  const t='« '+h.text+' » — '+h.narrator+' ('+h.source+')';
+  if(navigator.share) navigator.share({title:'حديث من السيرة',text:t});
+  else {navigator.clipboard.writeText(t); alert('تم نسخ الحديث');}
+}
+
 function renderMap(e){
   const city={
     "مكة":[335,112],"الكعبة":[335,112],"المدينة":[225,68],"قباء":[228,78],"بدر":[255,88],"أحد":[228,60],"خيبر":[235,42],"تبوك":[180,18],"مؤتة":[155,52],"حنين":[345,105],"الطائف":[350,118],"الحديبية":[322,108],"عرفة":[340,118],"منى":[338,112],"قديد":[285,98],"رابغ":[255,85],"الأبواء":[245,78],"الحبشة":[75,145],"الشام":[160,25],"بصرى":[170,28],"نجران":[320,155],"اليمن":[305,165],"نجد":[270,75],"فدك":[245,38]
