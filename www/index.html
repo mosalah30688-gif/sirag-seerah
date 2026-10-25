@@ -157,12 +157,21 @@ async function load(){
 function renderToday(){
   const el=document.getElementById('todayCard');
   if(!el || !data.length) return;
-  const d=new Date();
-  const idx=(d.getDate()+d.getMonth()*3)%data.length;
+  // التاريخ الهجري (أم القرى) هو الأساس في السيرة
+  let hDay=1,hMonth=1,hYear='',hStr='';
+  try{
+    const fmt=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
+    const parts=fmt.formatToParts(new Date());
+    hDay=parseInt(parts.find(p=>p.type==='day').value)||1;
+    hMonth=parseInt(parts.find(p=>p.type==='month').value)||1;
+    hYear=parts.find(p=>p.type==='year').value||'';
+    hStr=`${hDay} ${['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'][hMonth-1]} ${hYear}هـ`;
+  }catch(e){ hStr=new Date().toLocaleDateString('ar-EG'); }
+  const idx=(hDay + hMonth*3) % data.length;
   const e=data[idx];
   window._todayId=e.id;
   el.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:#fff3b8;color:#0f3d2e;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📅</div>
-    <div style="flex:1;min-width:0"><div style="font-size:11px;opacity:.8">عِش اليوم — ${new Date().toLocaleDateString('ar-EG')}</div><div style="font-weight:900;margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div><div style="font-size:12px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.desc.slice(0,60)}...</div></div>
+    <div style="flex:1;min-width:0"><div style="font-size:11px;opacity:.8">عِش اليوم — ${hStr}</div><div style="font-weight:900;margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div><div style="font-size:12px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.desc.slice(0,60)}...</div></div>
     <div style="font-size:18px">←</div>`;
   el.onclick=()=>openEvent(e.id);
 }
