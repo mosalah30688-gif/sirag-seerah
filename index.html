@@ -77,7 +77,6 @@
   .qbox button.correct{background:#e6f4ea;border-color:#a3d9b1}
   .qbox button.wrong{background:#fde8e8;border-color:#f5b5b5}
   .mapbox{height:180px;background:linear-gradient(135deg,#0f3d2e,#1a5a3a);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff3b8;position:relative;overflow:hidden}
-  .mapbox::after{content:'خريطة الهجرة / الغزوة — SVG أوفلاين';font-size:12px;opacity:.9}
   .progress{height:8px;background:#ece6d3;border-radius:999px;overflow:hidden;margin:10px 0}
   .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green));width:0}
   /* HIFZ */
@@ -99,13 +98,13 @@
   <div class="seal-wrap">
     <div class="seal"><img src="./seal.png" alt="خاتم النبي - محمد رسول الله"></div>
   </div>
-  <div class="sub" style="margin-top:16px">تايملاين، خرائط، حفظ ذكي، ومحاكي قرارات.</div>
+
   <div class="cta">
     <button class="btn btn-gold" onclick="document.querySelector('.topbar').scrollIntoView({behavior:'smooth'})">ابدأ الرحلة الآن ↓</button>
     <button class="btn btn-ghost" onclick="openNasab()">🌳 شجرة النسب</button>
     <button class="btn btn-ghost" onclick="toggleHifz()">🧠 حفظي</button>
   </div>
-  <div class="stats"><span>⏳ <b id="statCount">37</b> حدث</span><span>🗺️ 12 خريطة</span><span>📖 9 روابط قرآنية</span></div>
+  <div class="stats"><span>⏳ <b id="statCount">300</b> حدث موسوعي</span></div>
 </div>
 
 <div class="topbar">
@@ -185,12 +184,39 @@ function renderToday(){
   el.style.cursor='pointer';
 }
 function renderMap(e){
-  // خريطة SVG أوفلاين بسيطة
-  if(e.id===19) return `<svg viewBox="0 0 450 260" style="width:100%;height:100%"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f3d2e"/><stop offset="100%" stop-color="#1e5a3a"/></linearGradient></defs><rect width="450" height="260" rx="14" fill="url(#g)"/><path d="M380 220 C340 190 300 140 200 50" fill="none" stroke="#c8a84a" stroke-width="3" stroke-dasharray="8 6" opacity=".9"/><circle cx="380" cy="220" r="8" fill="#fff3b8" stroke="#c8a84a" stroke-width="2"/><circle cx="200" cy="50" r="8" fill="#fff3b8" stroke="#c8a84a" stroke-width="2"/><text x="385" y="225" fill="#fff" font-size="10" font-family="Tajawal">مكة</text><text x="130" y="55" fill="#fff" font-size="10" font-family="Tajawal">المدينة</text><text x="150" y="145" fill="#fff3b8" font-size="9" opacity=".9">مسار الهجرة 450 كم — 8 أيام</text></svg>`;
-  if(e.id===22) return `<svg viewBox="0 0 450 200" style="width:100%;height:100%"><rect width="450" height="200" rx="14" fill="#0f3d2e"/><circle cx="80" cy="100" r="10" fill="#fff3b8"/><text x="60" y="130" fill="#fff" font-size="10">المدينة</text><circle cx="370" cy="100" r="12" fill="#c8a84a"/><text x="360" y="130" fill="#fff" font-size="10">بدر</text><path d="M90 100 L360 100" stroke="#fff" stroke-width="2" stroke-dasharray="6 4" opacity=".7"/><text x="190" y="90" fill="#fff3b8" font-size="9">313 vs 1000</text></svg>`;
-  if(e.id===25) return `<svg viewBox="0 0 450 200" style="width:100%;height:100%"><rect width="450" height="200" rx="14" fill="#1a3a2a"/><path d="M20 100 H430" stroke="#c8a84a" stroke-width="4"/><text x="180" y="90" fill="#fff3b8" font-size="11">الخندق — 5 كم</text><text x="160" y="115" fill="#fff" font-size="9" opacity=".8">حفره سلمان في 6 أيام</text></svg>`;
-  if(e.id===31) return `<svg viewBox="0 0 450 200" style="width:100%;height:100%"><rect width="450" height="200" rx="14" fill="#0a0a0a"/><circle cx="225" cy="100" r="55" fill="none" stroke="#c8a84a" stroke-width="3"/><text x="205" y="105" fill="#fff" font-size="11">الكعبة</text><text x="165" y="165" fill="#c8a84a" font-size="10">فتح مكة — 10 آلاف</text></svg>`;
-  return `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff3b8;font-size:12px;opacity:.9">📍 ${e.place} — خريطة تفصيلية قريباً</div>`;
+  const P={
+    "مكة":[360,165],"الكعبة":[360,165],"المسجد الحرام":[360,165],"بطحاء مكة":[360,165],
+    "المدينة":[200,55],"المسجد النبوي":[200,55],"حجرة عائشة":[200,55],"قباء":[215,70],"المدينة — حجرة عائشة":[200,55],
+    "بدر":[250,105],"العقبة — منى":[350,145],"منى":[350,150],"عرفة":[365,155],"مزدلفة":[355,153],"الحديبية":[345,160],"الجعرانة":[365,145],
+    "أحد":[205,68],"جبل أحد":[205,68],"حمراء الأسد":[195,75],"الخندق":[200,60],"خيبر":[220,35],"فدك":[240,45],"وادي القرى":[230,40],
+    "تبوك":[165,18],"أيلة":[150,30],"مؤتة — الأردن":[140,55],"مؤتة":[140,55],"الشام":[160,20],"بصرى الشام":[170,22],"نجران":[340,230],"اليمن":[330,250],
+    "الحبشة":[80,220],"الطائف":[375,145],"الطائف ومكة":[365,155],"حنين":[340,135],"حنين والطائف":[355,140],"ذات الرقاع":[260,85],"دومة الجندل":[180,15],"نجد":[270,95],"بني سعد":[345,175],
+    "قديد":[300,135],"عسفان":[330,150],"رابغ":[255,95],"الأبواء":[240,80],"المريسيع":[260,115],"بني المصطلق":[260,115],
+    "فارس → المدينة":[380,60],"الرجيع":[335,160],"بئر معونة":[280,70],"شعب أبي طالب":[358,165],"دار الأرقم":[360,165],"الصفا":[360,165]
+  };
+  function coord(place){
+    if(P[place]) return P[place];
+    for(let k in P){ if(place.includes(k) || k.includes(place)) return P[k]; }
+    return [275,110];
+  }
+  const c=coord(e.place);
+  const isHijra = e.type==="hijra" || e.title.includes("هجرة")|| e.title.includes("الهجرة");
+  const isBattle = e.type==="battle";
+  const isMeet = e.type==="meet"||e.type==="treaty";
+  let extra="";
+  if(e.id===19 || e.hijri==="1 هـ" && e.title.includes("الهجرة")){
+    extra=`<path d="M360 165 C320 120 260 80 200 55" fill="none" stroke="#c8a84a" stroke-width="2.5" stroke-dasharray="7 5"/><circle cx="360" cy="165" r="7" fill="#fff" stroke="#c8a84a" stroke-width="2"/><circle cx="200" cy="55" r="7" fill="#fff" stroke="#c8a84a" stroke-width="2"/><text x="322" y="95" fill="#fff3b8" font-size="8" font-family="Tajawal" text-anchor="middle">450 كم — 8 أيام</text>`;
+  } else if(isBattle){
+    extra=`<circle cx="${c[0]}" cy="${c[1]}" r="18" fill="none" stroke="#c8a84a" stroke-width="1.2" opacity="0.5"/><circle cx="${c[0]}" cy="${c[1]}" r="26" fill="none" stroke="#c8a84a" stroke-width="0.8" opacity="0.25"/>`;
+  } else if(isMeet){
+    extra=`<circle cx="${c[0]}" cy="${c[1]}" r="14" fill="none" stroke="#fff3b8" stroke-width="1" stroke-dasharray="4 3"/>`;
+  }
+  const bg=`<defs><linearGradient id="g${e.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f3d2e"/><stop offset="100%" stop-color="#163d2e"/></linearGradient></defs><rect width="450" height="180" rx="14" fill="url(#g${e.id})"/>`;
+  const grid=`<path d="M0 45 H450 M0 90 H450 M0 135 H450 M115 0 V180 M230 0 V180 M345 0 V180" stroke="#fff" stroke-width="0.4" opacity="0.07"/>`;
+  const dot=`<circle cx="${c[0]}" cy="${c[1]}" r="7" fill="#fff3b8" stroke="#c8a84a" stroke-width="2"/>`;
+  const label=`<g><rect x="${c[0]-38}" y="${c[1]+12}" width="76" height="18" rx="9" fill="#0f3d2e" stroke="#c8a84a" stroke-width="0.8" opacity="0.95"/><text x="${c[0]}" y="${c[1]+24}" fill="#fff3b8" font-size="9" font-family="Tajawal" text-anchor="middle" font-weight="800">${e.place.length>18?e.place.slice(0,18):e.place}</text></g>`;
+  const title=`<text x="10" y="16" fill="#c8a84a" font-size="8" font-family="Tajawal" font-weight="800">${e.hijri} • ${e.phase}</text><text x="440" y="16" fill="#fff" font-size="7" font-family="Tajawal" opacity="0.6" text-anchor="end">${e.id}/300</text>`;
+  return `<svg viewBox="0 0 450 180" style="width:100%;height:100%"><g>${bg}${grid}${extra}${dot}${label}${title}</g></svg>`;
 }
 function filterPhase(p,el){
   active=p;
@@ -315,7 +341,7 @@ function openNasab(){
           <b>الأبناء:</b> ${p.children.join(' • ')}
         </div>
       </div>
-      <p style="font-size:12px;color:#888;text-align:center">اضغط على أي اسم لترى قصته (قريباً)</p>
+      <p style="font-size:11px;color:#888;text-align:center">اللهم صل وسلم على نبينا محمد ﷺ</p>
     `;
   document.getElementById('nasabDrawer').classList.add('open');
   document.getElementById('overlay').classList.add('open');
