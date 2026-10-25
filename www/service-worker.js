@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.5-hadith-101';
+const CACHE = 'sirag-v1.6-hadith-500';
 const ASSETS = [
   './',
   './index.html',
