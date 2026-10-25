@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>محمد رسول الله — من الغار إلى الوداع</title>
 <link rel="icon" href="./icon-512.png">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0f3d2e">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;700;900&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
@@ -353,6 +355,7 @@ function toggleHifz(){ filterPhase('all',document.querySelector('[data-filter="a
 function nextEvent(){ if(!opened) return; const i=data.findIndex(x=>x.id===opened.id); if(i>=0&&i<data.length-1) openEvent(data[i+1].id); }
 function shareEvent(){ if(!opened) return; const t=`${opened.title} — ${opened.hijri} (${opened.place})\n${opened.desc}`; if(navigator.share) navigator.share({title:opened.title,text:t}); else {navigator.clipboard.writeText(t); alert('تم النسخ');}}
 load();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(()=>{});}
 </script>
 </body>
 </html>

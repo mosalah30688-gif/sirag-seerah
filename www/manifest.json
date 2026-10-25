@@ -1,9 +1,28 @@
 {
-  "name": "محمد رسول الله",
-  "short_name": "السيرة",
+  "name": "محمد رسول الله — من الغار إلى الوداع",
+  "short_name": "سراج السيرة",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0a0a0a",
+  "background_color": "#fdfcf6",
   "theme_color": "#0f3d2e",
-  "description": "من الغار إلى الوداع - السيرة النبوية"
+  "description": "موسوعة السيرة النبوية 300 حدث — تايملاين، خرائط جغرافية، آيات وروايات موثقة",
+  "icons": [
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./seal.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
