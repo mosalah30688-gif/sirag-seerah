@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.15-images-17';
+const CACHE = 'sirag-v1.16-sahaba-12-15';
 const ASSETS = [
   './',
   './index.html',
