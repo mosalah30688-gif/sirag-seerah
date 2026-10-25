@@ -128,13 +128,23 @@
 <footer>ﷺ — اللهم صل وسلم على نبينا محمد — إهداء لروح سراج</footer>
 
 <script>
-let data=[];
+let data=[],maps={};
 let active='all';
 let opened=null;
 let hifz=new Set(JSON.parse(localStorage.getItem('seerah_hifz')||'[]'));
 function saveHifz(){localStorage.setItem('seerah_hifz',JSON.stringify([...hifz]))}
 async function load(){
-  const r=await fetch('./data/seerah.json'); data=await r.json(); render();
+  const r=await fetch('./data/seerah.json'); data=await r.json();
+  try{ const m=await fetch('./data/maps.json'); maps=await m.json(); }catch(e){}
+  render();
+}
+function renderMap(e){
+  // خريطة SVG أوفلاين بسيطة
+  if(e.id===19) return `<svg viewBox="0 0 450 260" style="width:100%;height:100%"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f3d2e"/><stop offset="100%" stop-color="#1e5a3a"/></linearGradient></defs><rect width="450" height="260" rx="14" fill="url(#g)"/><path d="M380 220 C340 190 300 140 200 50" fill="none" stroke="#c8a84a" stroke-width="3" stroke-dasharray="8 6" opacity=".9"/><circle cx="380" cy="220" r="8" fill="#fff3b8" stroke="#c8a84a" stroke-width="2"/><circle cx="200" cy="50" r="8" fill="#fff3b8" stroke="#c8a84a" stroke-width="2"/><text x="385" y="225" fill="#fff" font-size="10" font-family="Tajawal">مكة</text><text x="130" y="55" fill="#fff" font-size="10" font-family="Tajawal">المدينة</text><text x="150" y="145" fill="#fff3b8" font-size="9" opacity=".9">مسار الهجرة 450 كم — 8 أيام</text></svg>`;
+  if(e.id===22) return `<svg viewBox="0 0 450 200" style="width:100%;height:100%"><rect width="450" height="200" rx="14" fill="#0f3d2e"/><circle cx="80" cy="100" r="10" fill="#fff3b8"/><text x="60" y="130" fill="#fff" font-size="10">المدينة</text><circle cx="370" cy="100" r="12" fill="#c8a84a"/><text x="360" y="130" fill="#fff" font-size="10">بدر</text><path d="M90 100 L360 100" stroke="#fff" stroke-width="2" stroke-dasharray="6 4" opacity=".7"/><text x="190" y="90" fill="#fff3b8" font-size="9">313 vs 1000</text></svg>`;
+  if(e.id===25) return `<svg viewBox="0 0 450 200" style="width:100%;height:100%"><rect width="450" height="200" rx="14" fill="#1a3a2a"/><path d="M20 100 H430" stroke="#c8a84a" stroke-width="4"/><text x="180" y="90" fill="#fff3b8" font-size="11">الخندق — 5 كم</text><text x="160" y="115" fill="#fff" font-size="9" opacity=".8">حفره سلمان في 6 أيام</text></svg>`;
+  if(e.id===31) return `<svg viewBox="0 0 450 200" style="width:100%;height:100%"><rect width="450" height="200" rx="14" fill="#0a0a0a"/><circle cx="225" cy="100" r="55" fill="none" stroke="#c8a84a" stroke-width="3"/><text x="205" y="105" fill="#fff" font-size="11">الكعبة</text><text x="165" y="165" fill="#c8a84a" font-size="10">فتح مكة — 10 آلاف</text></svg>`;
+  return `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff3b8;font-size:12px;opacity:.9">📍 ${e.place} — خريطة تفصيلية قريباً</div>`;
 }
 function filterPhase(p,el){
   active=p;
@@ -200,7 +210,7 @@ function openEvent(id){
     <h3>${e.title}</h3>
     <p>${e.desc}</p>
     ${e.ayah?`<div class="qbox"><h4>🔗 الآية المرتبطة — ${e.ayah}</h4><p style="font-family:Amiri,serif;font-size:18px">﴿ ... ﴾ — افتحها في مصحف سراج</p><button onclick="alert('سيفتح مصحف سراج على ${e.ayah}')">افتح في سراج</button></div>`:''}
-    <div class="mapbox"></div>
+    <div class="mapbox" style="height:190px;padding:0;overflow:hidden;background:#0f3d2e">${renderMap(e)}</div>
     <div class="qbox" id="quizBox">
       <h4>🎯 محاكي القرار — اختبر فهمك</h4>
       <div id="quizQ"></div>
