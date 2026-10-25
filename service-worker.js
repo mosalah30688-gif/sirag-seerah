@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.20-layered-300sahaba';
+const CACHE = 'sirag-v1.21-sahaba-dropdown-paging';
 const ASSETS = [
   './',
   './index.html',

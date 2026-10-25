@@ -142,7 +142,14 @@
     </div>
   </div>
   <button class="chip" onclick="filterPhase('إثراء',this)" title="صور تخيلية وخرائط ومرئيات">✨ إثراء</button>
-  <button class="chip" onclick="filterPhase('أصحاب الرسول',this)" title="الخلفاء والعشرة وآل البيت">👥 أصحاب الرسول</button>
+  <div class="dropdown" id="sahabaDrop">
+    <button class="chip" onclick="toggleDropdown('sahabaDrop');populateSahabaDropdown()">👥 أصحاب الرسول ▼</button>
+    <div class="dropdown-content" style="min-width:260px;max-height:360px;overflow:hidden">
+      <div style="padding:8px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0"><input id="sahabaSearchInput" placeholder="ابحث: أبو بكر، عمر، خديجة..." oninput="filterSahabaDropdown(this.value)" style="width:100%;padding:7px 10px;border:1px solid #e8e0c8;border-radius:999px;font-family:Tajawal;font-size:12px;outline:none"></div>
+      <div id="sahabaDropdownList" style="overflow:auto;max-height:260px"></div>
+      <div style="padding:6px;border-top:1px solid #eee;background:#fdfcf6"><a onclick="filterPhase('أصحاب الرسول',document.querySelector('#sahabaDrop .chip'));closeDropdowns();sahabaPage=1;render()" style="display:block;text-align:center;background:#0f3d2e;color:#fff;border-radius:999px;padding:8px;font-weight:800">عرض الكل 300</a></div>
+    </div>
+  </div>
   <label class="search">🔍 <input id="q" placeholder="ابحث: بدر، خديجة، 2 هـ" oninput="render()"></label>
 </div>
 
@@ -172,6 +179,44 @@
 let data=[],maps={},ayahs={};
 let active='all';
 let opened=null;
+let sahabaPage=1;
+const SAHABA_PER_PAGE=10;
+function populateSahabaDropdown(){
+  const listEl=document.getElementById('sahabaDropdownList');
+  if(!listEl || !data.length) return;
+  if(listEl.dataset.populated && !listEl.dataset.needsRefresh) return;
+  const sahaba=data.filter(e=>e.phase==='أصحاب الرسول').sort((a,b)=>a.title.localeCompare(b.title,'ar'));
+  listEl.innerHTML=sahaba.map(e=>`<a onclick="selectSahaba(${e.id})">${e.title.split(' — ')[0]}</a>`).join('');
+  listEl.dataset.populated="1";
+}
+function filterSahabaDropdown(q){
+  const listEl=document.getElementById('sahabaDropdownList');
+  const sahaba=data.filter(e=>e.phase==='أصحاب الرسول');
+  const filtered=q? sahaba.filter(e=>e.title.includes(q) || e.desc.includes(q)): sahaba;
+  filtered.sort((a,b)=>a.title.localeCompare(b.title,'ar'));
+  listEl.innerHTML=filtered.slice(0,60).map(e=>`<a onclick="selectSahaba(${e.id})">${e.title.split(' — ')[0]}</a>`).join('') || '<div style="padding:12px;color:#999;text-align:center">لا نتائج</div>';
+}
+function selectSahaba(id){
+  closeDropdowns();
+  const e=data.find(x=>x.id===id); if(!e) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  const btn=document.querySelector('#sahabaDrop .chip');
+  if(!btn.dataset.orig) btn.dataset.orig=btn.textContent;
+  btn.textContent=e.title.split(' — ')[0]+' ▼';
+  btn.classList.add('active');
+  active='أصحاب الرسول';
+  document.getElementById('q').value='';
+  sahabaPage=1;
+  // مرر للبحث المباشر عن هذا الصحابي فقط
+  window._sahabaSelectedId=id;
+  render();
+  setTimeout(()=>openEvent(id),250);
+}
+function goSahabaPage(p){
+  sahabaPage=p;
+  render();
+  document.querySelector('.wrap').scrollIntoView({behavior:'smooth'});
+}
 let hifz=JSON.parse(localStorage.getItem('seerah_hifz_v2')||'{}');
 // ترحيل من النظام القديم (Set)
 try{
@@ -266,19 +311,23 @@ function renderMap(e){
 }
 function filterPhase(p,el){
   active=p;
+  window._sahabaSelectedId=null;
+  if(p==='أصحاب الرسول') sahabaPage=1;
+  // امسح بحث الصحابي المحدد عند تغيير الفلتر
+  if(p!=='أصحاب الرسول') document.getElementById('sahabaSearchInput') && (document.getElementById('sahabaSearchInput').value='');
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   if(el && el.tagName==='A'){
     const drop=el.closest('.dropdown');
     if(drop){
       const btn=drop.querySelector('.chip');
       btn.classList.add('active');
-      // احفظ الأصلي أول مرة
       if(!btn.dataset.orig) btn.dataset.orig=btn.textContent;
-      btn.textContent=el.textContent+' ▼';
+      // للصحابة: لا تغير النص إلى "عرض الكل"
+      if(drop.id==='sahabaDrop' && el.textContent.includes('الكل')) btn.textContent='👥 أصحاب الرسول ▼';
+      else btn.textContent=el.textContent+' ▼';
       btn.dataset.active=p;
     }
   } else if(el){
-    // ضغط "الكل" → رجع أسماء القوائم لأصلها
     if(p==='all'){
       document.querySelectorAll('.dropdown .chip').forEach(b=>{
         if(b.dataset.orig) b.textContent=b.dataset.orig;
@@ -302,9 +351,23 @@ function render(){
   const wrap=document.getElementById('wrap');
   let list=data.filter(e=>{
     if(active!=='all' && !e.phase.includes(active) && e.phase!==active) return false;
-    if(q && !(e.title.includes(q)||e.desc.includes(q)||e.place.includes(q)||e.hijri.includes(q))) return false;
+    if(q && !(e.title.includes(q)||e.desc.includes(q)||(e.longDesc&&e.longDesc.includes(q))||e.place.includes(q)||e.hijri.includes(q))) return false;
     return true;
   });
+  // إذا اختير صحابي محدد من القائمة المنسدلة اعرضه وحده
+  if(window._sahabaSelectedId && active==='أصحاب الرسول'){
+    const sel=data.find(x=>x.id===window._sahabaSelectedId);
+    if(sel) list=[sel];
+  }
+  // ترقيم للصحابة 10/صفحة
+  let totalSahabaPages=1, sahabaTotal=0, sahabaSliceStart=0;
+  if(active==='أصحاب الرسول' && !window._sahabaSelectedId){
+    sahabaTotal=list.length;
+    totalSahabaPages=Math.ceil(sahabaTotal / SAHABA_PER_PAGE);
+    if(sahabaPage>totalSahabaPages) sahabaPage=1;
+    sahabaSliceStart=(sahabaPage-1)*SAHABA_PER_PAGE;
+    list=list.slice(sahabaSliceStart, sahabaSliceStart+SAHABA_PER_PAGE);
+  }
   // group by phase
   let html='';
   let cur='';
@@ -347,7 +410,26 @@ function render(){
     <div class="progress"><i style="width:${Math.min(100,pct)}%"></i></div>
     <div style="font-size:12px">${total}/${data.length} — ${pct}% ${due?`• ${due} للمراجعة الآن`:''}</div>
   </div>`;
-  wrap.innerHTML=hifzCard+html;
+  // ترقيم الصحابة 10/صفحة
+  let pagination='';
+  if(active==='أصحاب الرسول' && !window._sahabaSelectedId && totalSahabaPages>1){
+    pagination+=`<div style="display:flex;gap:6px;justify-content:center;align-items:center;margin:18px 0 10px;flex-wrap:wrap;background:#fff;border:1px solid #ece6d3;border-radius:999px;padding:8px 10px">`;
+    pagination+=`<button class="chip" ${sahabaPage===1?'disabled style="opacity:.4;pointer-events:none"':''} onclick="goSahabaPage(${sahabaPage-1})">‹ السابق</button>`;
+    for(let i=1;i<=Math.min(5,totalSahabaPages);i++) pagination+=`<button class="chip ${i===sahabaPage?'active':''}" onclick="goSahabaPage(${i})">${i}</button>`;
+    if(totalSahabaPages>7){
+      if(sahabaPage>5 && sahabaPage<totalSahabaPages-1) pagination+=`<span style="padding:6px;color:#999">…</span><button class="chip active">${sahabaPage}</button>`;
+      else if(totalSahabaPages>5) pagination+=`<span style="padding:6px;color:#999">…</span>`;
+      pagination+=`<button class="chip ${totalSahabaPages===sahabaPage?'active':''}" onclick="goSahabaPage(${totalSahabaPages})">${totalSahabaPages}</button>`;
+    } else {
+      for(let i=6;i<=totalSahabaPages;i++) pagination+=`<button class="chip ${i===sahabaPage?'active':''}" onclick="goSahabaPage(${i})">${i}</button>`;
+    }
+    pagination+=`<button class="chip" ${sahabaPage===totalSahabaPages?'disabled style="opacity:.4;pointer-events:none"':''} onclick="goSahabaPage(${sahabaPage+1})">التالي ›</button>`;
+    pagination+=`<span style="font-size:11px;color:#6b5d2e;margin-right:8px">${sahabaPage}/${totalSahabaPages} • ${sahabaTotal} صحابي</span>`;
+    pagination+=`</div>`;
+  } else if(window._sahabaSelectedId){
+    pagination=`<div style="text-align:center;margin:12px"><button class="chip" style="background:#fee;border-color:#f5b5b5" onclick="window._sahabaSelectedId=null;render()">✕ عرض كل 300</button></div>`;
+  }
+  wrap.innerHTML=hifzCard+html+pagination;
 }
 function openEvent(id){
   const e=data.find(x=>x.id===id); if(!e) return; opened=e;
