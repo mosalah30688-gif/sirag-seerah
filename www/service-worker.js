@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.9-tabs-345';
+const CACHE = 'sirag-v1.10-dropdown-outside';
 const ASSETS = [
   './',
   './index.html',
