@@ -160,17 +160,18 @@ async function load(){
 function renderToday(){
   const el=document.getElementById('todayCard');
   if(!el || !data.length) return;
-  // التاريخ الهجري (أم القرى) هو الأساس في السيرة
-  let hDay=1,hMonth=1,hYear='',hStr='',hMonthName='محرم';
+  // التاريخ الهجري (أم القرى) هو الأساس في السيرة — اليوم جمادى الأولى 1448
+  let hDay=14,hMonth=5,hYear='1448',hStr='',hMonthName='جمادى الأولى';
   const mNames=['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
   const mShort=['محرم','صفر','ربيع1','ربيع2','جمادى1','جمادى2','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
   try{
+    const toLatn=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d]/g,'');
     const fmt=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
     const parts=fmt.formatToParts(new Date());
-    hDay=parseInt(parts.find(p=>p.type==='day').value)||1;
-    hMonth=parseInt(parts.find(p=>p.type==='month').value)||1;
-    hYear=parts.find(p=>p.type==='year').value||'';
-    hMonthName=mNames[hMonth-1];
+    hDay=parseInt(toLatn(parts.find(p=>p.type==='day').value))||hDay;
+    hMonth=parseInt(toLatn(parts.find(p=>p.type==='month').value))||hMonth;
+    hYear=toLatn(parts.find(p=>p.type==='year').value)||hYear;
+    hMonthName=mNames[hMonth-1]||hMonthName;
     hStr=`${hDay} ${hMonthName} ${hYear}هـ`;
   }catch(e){ hStr=new Date().toLocaleDateString('ar-EG'); }
   const idx=(hDay + hMonth*3) % data.length;
