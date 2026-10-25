@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.12-enrich-tabs';
+const CACHE = 'sirag-v1.13-enrich-images-10';
 const ASSETS = [
   './',
   './index.html',
