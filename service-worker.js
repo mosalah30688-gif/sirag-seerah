@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.14-header-fix';
+const CACHE = 'sirag-v1.15-images-17';
 const ASSETS = [
   './',
   './index.html',
