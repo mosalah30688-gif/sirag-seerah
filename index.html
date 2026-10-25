@@ -76,7 +76,7 @@
   .qbox button{width:100%;text-align:right;background:#fdfcf6;border:1px solid #e8e0c8;border-radius:10px;padding:10px 12px;margin:6px 0;font-family:'Tajawal';cursor:pointer}
   .qbox button.correct{background:#e6f4ea;border-color:#a3d9b1}
   .qbox button.wrong{background:#fde8e8;border-color:#f5b5b5}
-  .mapbox{height:180px;background:linear-gradient(135deg,#0f3d2e,#1a5a3a);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff3b8;position:relative;overflow:hidden}
+  .mapbox{height:190px;background:#fdfcf6;border:1px solid #e8e0c8;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#0f3d2e;position:relative;overflow:hidden}
   .progress{height:8px;background:#ece6d3;border-radius:999px;overflow:hidden;margin:10px 0}
   .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green));width:0}
   /* HIFZ */
@@ -284,7 +284,7 @@ function openEvent(id){
     <h3>${e.title}</h3>
     <p>${e.desc}</p>
     ${e.ayah&&ayahs[e.ayah]?`<div class="qbox" style="background:#fdfcf6;border-color:#ece6d3"><h4 style="color:#0f3d2e">📖 الآية المرتبطة — ${e.ayah}</h4><p style="font-family:'Amiri',serif;font-size:19px;line-height:1.8;color:#0f3d2e;text-align:center">﴿ ${ayahs[e.ayah]} ﴾</p></div>`:''}
-    <div class="mapbox" style="height:190px;padding:0;overflow:hidden;background:#0f3d2e">${renderMap(e)}</div>
+    <div class="mapbox" style="height:190px;padding:0;overflow:hidden;background:#fdfcf6;border:1px solid #e8e0c8">${renderMap(e)}</div>
     <div class="qbox" id="quizBox">
       <h4>🎯 محاكي القرار — اختبر فهمك</h4>
       <div id="quizQ"></div>
