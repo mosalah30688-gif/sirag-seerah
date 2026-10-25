@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>محمد رسول الله — 23 سنة في جيبك</title>
-<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<title>محمد رسول الله — من الغار إلى الوداع</title>
+<link rel="icon" href="./icon-512.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;700;900&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
@@ -14,13 +14,14 @@
   .hero{background:#0a0a0a;color:#fff;min-height:58vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 16px;position:relative;overflow:hidden}
   .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#1a3a2a 0%,#000 70%);opacity:.9}
   .hero>*{position:relative;z-index:1}
-  .rayah{border:2px solid #fff3b8;padding:28px 36px;position:relative;background:#000;box-shadow:0 0 40px rgba(200,168,74,.2)}
-  .rayah::before{content:'لا إله إلا الله';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:#000;color:#fff3b8;font-size:11px;letter-spacing:3px;padding:0 12px;font-family:'Amiri',serif;border:1px solid #333}
-  .rayah h1{font-family:'Amiri',serif;font-size:52px;line-height:.9;font-weight:900;letter-spacing:2px}
-  .rayah h1 span{display:block}
-  .rayah h1 span:nth-child(1){font-size:48px}
-  .rayah h1 span:nth-child(2){font-size:56px;color:#fff3b8}
-  .rayah h1 span:nth-child(3){font-size:54px}
+  .seal-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .seal{width:148px;height:148px;border-radius:50%;overflow:hidden;border:3px solid #c8a84a;box-shadow:0 0 0 6px rgba(200,168,74,.12),0 12px 30px rgba(0,0,0,.5);background:#b89a4a}
+  .seal img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.05)}
+  .seal-title{font-family:'Amiri',serif;font-weight:900;line-height:.85;text-align:center}
+  .seal-title span{display:block;letter-spacing:1px}
+  .seal-title span:nth-child(1){font-size:44px;color:#fff3b8}
+  .seal-title span:nth-child(2){font-size:44px;color:#fff}
+  .seal-title span:nth-child(3){font-size:46px;color:#fff}
   .hero p{margin-top:18px;color:#c8a84a;letter-spacing:4px;font-size:13px;font-weight:700}
   .hero .sub{color:#aaa;font-size:13px;margin-top:6px;letter-spacing:.5px;line-height:1.6;max-width:520px}
   .hero .cta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -89,10 +90,13 @@
 <body>
 
 <div class="hero">
-  <div class="rayah">
-    <h1><span>مُحَمَّدٌ</span><span>رَسُولُ</span><span>اللهِ</span></h1>
+  <div class="seal-wrap">
+    <div class="seal"><img src="./seal.png" alt="خاتم النبي - محمد رسول الله"></div>
+    <div class="seal-title" style="font-family:'Amiri',serif">
+      <span>اللهُ</span><span>رسولُ</span><span>مُحَمَّدٌ</span>
+    </div>
   </div>
-  <p>مِنَ الغَارِ إِلَى الوَدَاعِ</p>
+  <p style="margin-top:14px">مِنَ الغَارِ إِلَى الوَدَاعِ</p>
   <div class="sub">عِش السيرة كأنك عشتها — من غار حراء إلى حجة الوداع. تايملاين، خرائط، حفظ ذكي، ومحاكي قرارات. أوفلاين 100%.</div>
   <div class="cta">
     <button class="btn btn-gold" onclick="document.querySelector('.topbar').scrollIntoView({behavior:'smooth'})">ابدأ الرحلة الآن ↓</button>
