@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.21-sahaba-dropdown-paging';
+const CACHE = 'sirag-v1.22-about-app-no-sahaba-icon';
 const ASSETS = [
   './',
   './index.html',

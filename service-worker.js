@@ -1,4 +1,4 @@
-const CACHE = 'sirag-v1.22-gold-seal-icon';
+const CACHE = 'sirag-v1.22-about-app-no-sahaba-icon';
 const ASSETS = [
   './',
   './index.html',

@@ -68,6 +68,11 @@
   .overlay.open{display:block}
   .drawer{position:fixed;inset:0 0 0 auto;width:min(560px,100%);background:var(--cream);z-index:31;transform:translateX(100%);transition:.3s;overflow:auto;border-left:1px solid #e8e0c8}
   .drawer.open{transform:translateX(0)}
+  .about-sheet{inset:auto 0 0;width:min(560px,100%);height:min(82vh,760px);height:min(82dvh,760px);max-height:90vh;margin:0 auto;border:1px solid #e8e0c8;border-bottom:0;border-radius:20px 20px 0 0;transform:translateY(100%);display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom)}
+  .about-sheet.open{transform:translateY(0)}
+  .about-sheet .drawer-body{overflow:auto;overscroll-behavior:contain}
+  .about-feature{width:100%;display:flex;align-items:center;gap:10px;text-align:right;background:#fff;border:1px solid #ece6d3;border-radius:12px;padding:11px 13px;margin:7px 0;font:700 14px 'Tajawal',sans-serif;color:#173c2f;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.035)}
+  .about-feature-icon{flex:0 0 32px;width:32px;height:32px;display:grid;place-items:center;background:#fff3d2;border-radius:10px;font-size:17px}
   .drawer-head{position:sticky;top:0;background:var(--cream);padding:14px;border-bottom:1px solid #e8e0c8;display:flex;align-items:center;gap:10px}
   .drawer-body{padding:18px}
   .drawer-body h3{font-size:22px;font-weight:900;color:var(--green)}
@@ -142,21 +147,13 @@
     </div>
   </div>
   <button class="chip" onclick="filterPhase('إثراء',this)" title="صور تخيلية وخرائط ومرئيات">✨ إثراء</button>
-  <div class="dropdown" id="sahabaDrop">
-    <button class="chip" onclick="toggleDropdown('sahabaDrop');populateSahabaDropdown()">👥 أصحاب الرسول ▼</button>
-    <div class="dropdown-content" style="min-width:260px;max-height:360px;overflow:hidden">
-      <div style="padding:8px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0"><input id="sahabaSearchInput" placeholder="ابحث: أبو بكر، عمر، خديجة..." oninput="filterSahabaDropdown(this.value)" style="width:100%;padding:7px 10px;border:1px solid #e8e0c8;border-radius:999px;font-family:Tajawal;font-size:12px;outline:none"></div>
-      <div id="sahabaDropdownList" style="overflow:auto;max-height:260px"></div>
-      <div style="padding:6px;border-top:1px solid #eee;background:#fdfcf6"><a onclick="filterPhase('أصحاب الرسول',document.querySelector('#sahabaDrop .chip'));closeDropdowns();sahabaPage=1;render()" style="display:block;text-align:center;background:#0f3d2e;color:#fff;border-radius:999px;padding:8px;font-weight:800">عرض الكل 300</a></div>
-    </div>
-  </div>
   <label class="search">🔍 <input id="q" placeholder="ابحث: بدر، خديجة، 2 هـ" oninput="render()"></label>
 </div>
 
 <div style="max-width:860px;margin:0 auto;padding:14px 14px 0"><div id="hadithBar" style="background:#fff;border:1px solid #e8e0c8;border-right:4px solid #c8a84a;border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.05)"><div style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:#0f3d2e;color:#fff3b8;display:flex;align-items:center;justify-content:center;font-size:18px">📜</div><div style="flex:1;min-width:0"><div style="font-size:10px;color:#0f3d2e;font-weight:800;letter-spacing:.6px">إشعارات السيرة — حديث صحيح</div><div id="hadithText" style="font-family:'Amiri',serif;font-size:16px;line-height:1.7;color:#0f2a20;margin:5px 0">جاري تحميل حديث السيرة...</div><div id="hadithSrc" style="font-size:11px;color:#6b5d2e"></div></div><div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0"><button onclick="nextHadith()" title="التالي" style="width:36px;height:36px;border-radius:50%;border:1px solid #e8e0c8;background:#fff;cursor:pointer;font-size:14px">↻</button><button onclick="shareHadith()" title="مشاركة" style="width:36px;height:36px;border-radius:50%;border:1px solid #e8e0c8;background:#fff;cursor:pointer;font-size:14px">↗</button></div></div></div>
 <div class="wrap" id="wrap"></div>
 
-<div class="overlay" id="overlay" onclick="closeDrawer();closeNasab()"></div>
+<div class="overlay" id="overlay" onclick="closeDrawer();closeNasab();closeAbout()"></div>
 <div class="drawer" id="nasabDrawer" style="width:min(640px,100%)">
   <div class="drawer-head">
     <button class="btn btn-ghost" style="color:#000;border-color:#ddd" onclick="closeNasab()">✕ إغلاق</button>
@@ -173,50 +170,43 @@
   <div class="drawer-body" id="drawerBody"></div>
 </div>
 
-<footer style="text-align:center;padding:20px;color:#999;font-size:11px">ﷺ</footer>
+<section class="drawer about-sheet" id="aboutDrawer" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="drawer-head">
+    <strong style="font-size:18px;color:#0f3d2e">حول التطبيق</strong>
+    <button class="btn btn-ghost" style="margin-right:auto;color:#000;border-color:#ddd" type="button" onclick="closeAbout()" aria-label="إغلاق">✕ إغلاق</button>
+  </div>
+  <div class="drawer-body" style="line-height:1.9;font-size:14px">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:64px;height:64px;border-radius:18px;margin:0 auto 10px;background:radial-gradient(circle at 32% 26%,#ffe9a3,#e6c56b 26%,#c2a15a 50%,#8c6f1f 78%);display:grid;place-items:center;box-shadow:0 5px 14px rgba(0,0,0,.13)">
+        <img src="./icon-512.png" alt="شعار سراج السيرة" style="width:48px;height:48px;object-fit:contain;border-radius:12px">
+      </div>
+      <b style="font-size:22px;color:#0f3d2e">سراج السيرة</b>
+      <div style="font-size:12px;color:#777;margin-top:4px">من الغار إلى الوداع · الإصدار 1.22</div>
+    </div>
+    <div style="padding:12px;background:#fff;border:1px solid #ece6d3;border-radius:12px;margin-bottom:14px">
+      <b style="display:block;color:#0f3d2e;margin-bottom:6px">المطوّر</b>
+      <div>محمد صلاح عبد الخالق</div>
+      <a href="tel:+201007002934" style="font-size:12px;color:#6b5d2e;text-decoration:none">+20 100 700 2934</a><br>
+      <a href="https://elkatebmohamadsalah.blogspot.com/p/blog-page_827.html" target="_blank" rel="noopener" style="color:#0f3d2e;font-size:12px;font-weight:800">صفحة التواصل ↗</a>
+    </div>
+    <b style="display:block;color:#0f3d2e;margin-bottom:6px">مميزات التطبيق</b>
+    <div class="about-feature"><span class="about-feature-icon">📜</span><span>خط زمني تفاعلي لأحداث السيرة النبوية</span></div>
+    <div class="about-feature"><span class="about-feature-icon">🔎</span><span>البحث والتصفّح حسب مراحل السيرة</span></div>
+    <div class="about-feature"><span class="about-feature-icon">📖</span><span>آيات قرآنية وأحاديث مرتبطة بأحداث السيرة</span></div>
+    <div class="about-feature"><span class="about-feature-icon">🗺️</span><span>خرائط توضيحية لأماكن ومحطات السيرة</span></div>
+    <div class="about-feature"><span class="about-feature-icon">🌳</span><span>شجرة نسب النبي ﷺ</span></div>
+    <div class="about-feature"><span class="about-feature-icon">🧠</span><span>حفظ الأحداث ومراجعتها ومتابعة التقدّم</span></div>
+    <div class="about-feature"><span class="about-feature-icon">↗️</span><span>مشاركة الأحداث والأحاديث</span></div>
+    <div class="about-feature"><span class="about-feature-icon">📱</span><span>واجهة مرنة للهاتف والكمبيوتر</span></div>
+  </div>
+</section>
+<footer style="text-align:center;padding:20px 12px"><button class="chip" type="button" onclick="openAbout()">ℹ️ حول التطبيق</button></footer>
+
 
 <script>
 let data=[],maps={},ayahs={};
 let active='all';
 let opened=null;
-let sahabaPage=1;
-const SAHABA_PER_PAGE=10;
-function populateSahabaDropdown(){
-  const listEl=document.getElementById('sahabaDropdownList');
-  if(!listEl || !data.length) return;
-  if(listEl.dataset.populated && !listEl.dataset.needsRefresh) return;
-  const sahaba=data.filter(e=>e.phase==='أصحاب الرسول').sort((a,b)=>a.title.localeCompare(b.title,'ar'));
-  listEl.innerHTML=sahaba.map(e=>`<a onclick="selectSahaba(${e.id})">${e.title.split(' — ')[0]}</a>`).join('');
-  listEl.dataset.populated="1";
-}
-function filterSahabaDropdown(q){
-  const listEl=document.getElementById('sahabaDropdownList');
-  const sahaba=data.filter(e=>e.phase==='أصحاب الرسول');
-  const filtered=q? sahaba.filter(e=>e.title.includes(q) || e.desc.includes(q)): sahaba;
-  filtered.sort((a,b)=>a.title.localeCompare(b.title,'ar'));
-  listEl.innerHTML=filtered.slice(0,60).map(e=>`<a onclick="selectSahaba(${e.id})">${e.title.split(' — ')[0]}</a>`).join('') || '<div style="padding:12px;color:#999;text-align:center">لا نتائج</div>';
-}
-function selectSahaba(id){
-  closeDropdowns();
-  const e=data.find(x=>x.id===id); if(!e) return;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  const btn=document.querySelector('#sahabaDrop .chip');
-  if(!btn.dataset.orig) btn.dataset.orig=btn.textContent;
-  btn.textContent=e.title.split(' — ')[0]+' ▼';
-  btn.classList.add('active');
-  active='أصحاب الرسول';
-  document.getElementById('q').value='';
-  sahabaPage=1;
-  // مرر للبحث المباشر عن هذا الصحابي فقط
-  window._sahabaSelectedId=id;
-  render();
-  setTimeout(()=>openEvent(id),250);
-}
-function goSahabaPage(p){
-  sahabaPage=p;
-  render();
-  document.querySelector('.wrap').scrollIntoView({behavior:'smooth'});
-}
 let hifz=JSON.parse(localStorage.getItem('seerah_hifz_v2')||'{}');
 // ترحيل من النظام القديم (Set)
 try{
@@ -306,15 +296,11 @@ function renderMap(e){
   } else {
     focus=`<circle cx="${c[0]}" cy="${c[1]}" r="5" fill="#fff3b8" stroke="#c8a84a" stroke-width="1.8"/><circle cx="${c[0]}" cy="${c[1]}" r="11" fill="none" stroke="#c8a84a" stroke-width="0.9" opacity="0.4"/><text x="${c[0]}" y="${c[1]+22}" fill="#0f3d2e" font-size="8" font-family="Tajawal" font-weight="900" text-anchor="middle">${e.place}</text>`;
   }
-  const title=`<text x="10" y="15" fill="#0f3d2e" font-size="7.5" font-family="Tajawal" font-weight="800">${e.hijri} • ${e.phase}</text><text x="440" y="15" fill="#57534e" font-size="6" font-family="Tajawal" text-anchor="end">${e.id}/300</text>`;
+  const title=`<text x="10" y="15" fill="#0f3d2e" font-size="7.5" font-family="Tajawal" font-weight="800">${e.hijri} • ${e.phase}</text>`;
   return `<svg viewBox="0 0 450 180" style="width:100%;height:100%"><defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c8a84a"/></marker></defs><g>${base}${cities}${focus}${title}</g></svg>`;
 }
 function filterPhase(p,el){
   active=p;
-  window._sahabaSelectedId=null;
-  if(p==='أصحاب الرسول') sahabaPage=1;
-  // امسح بحث الصحابي المحدد عند تغيير الفلتر
-  if(p!=='أصحاب الرسول') document.getElementById('sahabaSearchInput') && (document.getElementById('sahabaSearchInput').value='');
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   if(el && el.tagName==='A'){
     const drop=el.closest('.dropdown');
@@ -322,9 +308,7 @@ function filterPhase(p,el){
       const btn=drop.querySelector('.chip');
       btn.classList.add('active');
       if(!btn.dataset.orig) btn.dataset.orig=btn.textContent;
-      // للصحابة: لا تغير النص إلى "عرض الكل"
-      if(drop.id==='sahabaDrop' && el.textContent.includes('الكل')) btn.textContent='👥 أصحاب الرسول ▼';
-      else btn.textContent=el.textContent+' ▼';
+      btn.textContent=el.textContent+' ▼';
       btn.dataset.active=p;
     }
   } else if(el){
@@ -354,20 +338,6 @@ function render(){
     if(q && !(e.title.includes(q)||e.desc.includes(q)||(e.longDesc&&e.longDesc.includes(q))||e.place.includes(q)||e.hijri.includes(q))) return false;
     return true;
   });
-  // إذا اختير صحابي محدد من القائمة المنسدلة اعرضه وحده
-  if(window._sahabaSelectedId && active==='أصحاب الرسول'){
-    const sel=data.find(x=>x.id===window._sahabaSelectedId);
-    if(sel) list=[sel];
-  }
-  // ترقيم للصحابة 10/صفحة
-  let totalSahabaPages=1, sahabaTotal=0, sahabaSliceStart=0;
-  if(active==='أصحاب الرسول' && !window._sahabaSelectedId){
-    sahabaTotal=list.length;
-    totalSahabaPages=Math.ceil(sahabaTotal / SAHABA_PER_PAGE);
-    if(sahabaPage>totalSahabaPages) sahabaPage=1;
-    sahabaSliceStart=(sahabaPage-1)*SAHABA_PER_PAGE;
-    list=list.slice(sahabaSliceStart, sahabaSliceStart+SAHABA_PER_PAGE);
-  }
   // group by phase
   let html='';
   let cur='';
@@ -399,7 +369,6 @@ function render(){
   });
   if(!list.length){
     if(active==='إثراء') html='<div style="text-align:center;padding:32px;background:#fff;border:1px solid #e8e0c8;border-radius:16px;margin-top:10px"><div style="font-size:28px">✨</div><h3 style="margin:8px 0;color:#0f3d2e">إثراء — قريباً</h3><p style="color:#666;font-size:13px;line-height:1.8;max-width:520px;margin:0 auto">صور تخيلية مرسومة لحياة النبي ﷺ (عام الفيل، شق الصدر، غار حراء، بدر، فتح مكة) + خرائط تفاعلية ومرئيات. التبويب جاهز بانتظار رفع المحتوى من زاد المعاد والرحيق.</p><button class="btn btn-gold" style="margin-top:12px" onclick="filterPhase(\'all\',document.querySelector(\'[data-filter=all]\'))">العودة للكل</button></div>';
-    else if(active==='أصحاب الرسول') html='<div style="text-align:center;padding:32px;background:#fff;border:1px solid #e8e0c8;border-radius:16px;margin-top:10px"><div style="font-size:28px">👥</div><h3 style="margin:8px 0;color:#0f3d2e">أصحاب الرسول — قريباً</h3><p style="color:#666;font-size:13px;line-height:1.8;max-width:520px;margin:0 auto">تراجم الخلفاء الأربعة والعشرة المبشّرين وآل البيت، كل صحابي بقصة وحديث وأثر. التبويب جاهز بانتظار رفع المحتوى.</p><button class="btn btn-gold" style="margin-top:12px" onclick="filterPhase(\'all\',document.querySelector(\'[data-filter=all]\'))">العودة للكل</button></div>';
     else html='<p style="text-align:center;color:#999;padding:40px">لا نتائج</p>';
   }
   // hifz card top — نظام 1-3-7-14-30
@@ -410,26 +379,7 @@ function render(){
     <div class="progress"><i style="width:${Math.min(100,pct)}%"></i></div>
     <div style="font-size:12px">${total}/${data.length} — ${pct}% ${due?`• ${due} للمراجعة الآن`:''}</div>
   </div>`;
-  // ترقيم الصحابة 10/صفحة
-  let pagination='';
-  if(active==='أصحاب الرسول' && !window._sahabaSelectedId && totalSahabaPages>1){
-    pagination+=`<div style="display:flex;gap:6px;justify-content:center;align-items:center;margin:18px 0 10px;flex-wrap:wrap;background:#fff;border:1px solid #ece6d3;border-radius:999px;padding:8px 10px">`;
-    pagination+=`<button class="chip" ${sahabaPage===1?'disabled style="opacity:.4;pointer-events:none"':''} onclick="goSahabaPage(${sahabaPage-1})">‹ السابق</button>`;
-    for(let i=1;i<=Math.min(5,totalSahabaPages);i++) pagination+=`<button class="chip ${i===sahabaPage?'active':''}" onclick="goSahabaPage(${i})">${i}</button>`;
-    if(totalSahabaPages>7){
-      if(sahabaPage>5 && sahabaPage<totalSahabaPages-1) pagination+=`<span style="padding:6px;color:#999">…</span><button class="chip active">${sahabaPage}</button>`;
-      else if(totalSahabaPages>5) pagination+=`<span style="padding:6px;color:#999">…</span>`;
-      pagination+=`<button class="chip ${totalSahabaPages===sahabaPage?'active':''}" onclick="goSahabaPage(${totalSahabaPages})">${totalSahabaPages}</button>`;
-    } else {
-      for(let i=6;i<=totalSahabaPages;i++) pagination+=`<button class="chip ${i===sahabaPage?'active':''}" onclick="goSahabaPage(${i})">${i}</button>`;
-    }
-    pagination+=`<button class="chip" ${sahabaPage===totalSahabaPages?'disabled style="opacity:.4;pointer-events:none"':''} onclick="goSahabaPage(${sahabaPage+1})">التالي ›</button>`;
-    pagination+=`<span style="font-size:11px;color:#6b5d2e;margin-right:8px">${sahabaPage}/${totalSahabaPages} • ${sahabaTotal} صحابي</span>`;
-    pagination+=`</div>`;
-  } else if(window._sahabaSelectedId){
-    pagination=`<div style="text-align:center;margin:12px"><button class="chip" style="background:#fee;border-color:#f5b5b5" onclick="window._sahabaSelectedId=null;render()">✕ عرض كل 300</button></div>`;
-  }
-  wrap.innerHTML=hifzCard+html+pagination;
+  wrap.innerHTML=hifzCard+html;
 }
 function openEvent(id){
   const e=data.find(x=>x.id===id); if(!e) return; opened=e;
@@ -583,8 +533,22 @@ function answerQuiz(chosen,ans,info){
   const p=document.createElement('div'); p.style.cssText='margin-top:8px;background:#fff3b8;padding:8px;border-radius:8px;font-size:13px'; p.textContent='💡 '+info; c.appendChild(p);
 }
 const NASAB = {"prophet":{"name":"محمد ﷺ","line":["عدنان","معد","نزار","مضر","إلياس","مدركة","خزيمة","كنانة","النضر (قريش)","مالك","فهر","غالب","لؤي","كعب","مرة","كلاب","قصي","عبد مناف","هاشم","عبد المطلب","عبد الله","محمد ﷺ"],"father":"عبد الله بن عبد المطلب","mother":"آمنة بنت وهب","grandfather":"عبد المطلب بن هاشم","uncle":["أبو طالب","حمزة","العباس","أبو لهب"],"wives":["خديجة","سودة","عائشة","حفصة","زينب","أم سلمة","جويرية","ميمونة","صفية","زينب بنت جحش"],"children":["القاسم","عبد الله","إبراهيم","زينب","رقية","أم كلثوم","فاطمة"]}};
-function closeDrawer(){document.getElementById('drawer').classList.remove('open');if(!document.getElementById('nasabDrawer').classList.contains('open')) document.getElementById('overlay').classList.remove('open')}
-function closeNasab(){document.getElementById('nasabDrawer').classList.remove('open');if(!document.getElementById('drawer').classList.contains('open')) document.getElementById('overlay').classList.remove('open')}
+function syncOverlay(){
+  const open=['drawer','nasabDrawer','aboutDrawer'].some(id=>document.getElementById(id)?.classList.contains('open'));
+  document.getElementById('overlay').classList.toggle('open',open);
+}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');syncOverlay()}
+function closeNasab(){document.getElementById('nasabDrawer').classList.remove('open');syncOverlay()}
+function openAbout(){
+  closeDrawer(); closeNasab(); closeAbout();
+  const panel=document.getElementById('aboutDrawer');
+  panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); syncOverlay();
+}
+function closeAbout(){
+  const panel=document.getElementById('aboutDrawer');
+  if(panel){panel.classList.remove('open');panel.setAttribute('aria-hidden','true')}
+  syncOverlay();
+}
 function openNasab(){
   const body=document.getElementById('nasabBody');
   const p=NASAB.prophet;
